@@ -1,0 +1,5 @@
+Allow user to specify stocks (add and remove)
+Allow user to specify threshold for each stock
+Check stock price at interval X mins-->Record stock prices (by hour) in SQL
+Send an SMS message when a stock reaches a certain price
+Present chart of stock history (http://chart.finance.yahoo.com/z?s=GOOG)
