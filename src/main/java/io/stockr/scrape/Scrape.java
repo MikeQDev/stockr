@@ -15,17 +15,23 @@ public class Scrape {
 			String posOrNeg = null;
 			String price = null;
 			while ((sx = reader.readLine()) != null) {
-				if (sx.startsWith("\t</script><div id=\"yfi_broker_buttons")) {
-					int indexB = sx.indexOf("png");
+				if (sx.startsWith("})();</script></head><body><div id=\"app\">")) {
+					String start = sx.substring(sx.indexOf("<span class=\"Fw(b) D(ib) Fz(36px) Mb(-4px)"));
 
-					posOrNeg = sx.substring(indexB + 12, indexB + 15);
-
-					StringBuilder sB = new StringBuilder(sx.substring(sx
-							.indexOf("yfs")));
-					price = sB.substring(sB.toString().indexOf('>') + 1,
-							sB.toString().indexOf('<'));
+					price = start.substring(start.indexOf('>')+1, start.indexOf("</span>"));
+					//System.out.println(price);
 					if (price.contains(","))
 						price = sx.replaceAll(",", "");
+					
+					String startPosNeg = start.substring(start.indexOf("<span class=\"Fw(500) D(ib) Pstart(10px) Fz(24px) C($data"));
+					
+					posOrNeg = startPosNeg.substring(startPosNeg.indexOf('>'), startPosNeg.indexOf("</span>"));
+					
+					if(posOrNeg.charAt(1) == '+')
+						posOrNeg = "pos";
+					else if(posOrNeg.charAt(1) == '-')
+						posOrNeg = "neg";
+					//System.out.println(posOrNeg);
 				}
 
 			}
@@ -37,7 +43,7 @@ public class Scrape {
 			else
 				return new Double[] {Double.parseDouble(price), 0.0};
 		} catch (Exception x) {
-			// x.printStackTrace();
+			 x.printStackTrace();
 		}
 		return new Double[] { -1.0, -1.0 };
 	}

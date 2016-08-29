@@ -1,10 +1,6 @@
 package io.stockr.gui;
 
-import io.stockr.fileio.FileIO;
-import io.stockr.scrape.Scrape;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -21,6 +17,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,12 +29,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+
+import io.stockr.fileio.FileIO;
+import io.stockr.scrape.Scrape;
 
 public class MainGUI extends JFrame {
-	private final String REDGRAPH = "http://i.imgur.com/ZmFb41N.png",
-			GREENGRAPH = "http://i.imgur.com/UbJ1Cfa.png",
-			BLACKGRAPH = "http://i.imgur.com/DCnJ1z2.png";
+	private final ImageIcon REDLABEL = new ImageIcon(getClass().getResource("/images/red.png")),
+			GREENLABEL = new ImageIcon(getClass().getResource("/images/green.png")),
+			BLACKLABEL = new ImageIcon(getClass().getResource("/images/black.png"));
+
 	private JPanel[] subpanels;
 	private JLabel lastUpdateLabel = new JLabel("Updated: ??:??:??");
 	private DecimalFormat dF = new DecimalFormat("#,###.00");
@@ -45,7 +45,7 @@ public class MainGUI extends JFrame {
 	private Dragger drag = new Dragger();
 	private Timer updateTimer;
 	private UpdateScheduler uS;
-	private int refreshTime = 5000, textSize = 12;
+	private int refreshTime = 30000, textSize = 12;
 	private JPanel masterPanel, masterGraphPanel;
 	private HashMap<String, String> pricesBeforeUpdate = new HashMap<String, String>();
 	private boolean firstRun = true;
@@ -86,14 +86,12 @@ public class MainGUI extends JFrame {
 		if (!firstRun) {
 			pricesBeforeUpdate.clear();
 			for (int i = 0; i < subpanels.length; i++) {
-				pricesBeforeUpdate.put(
-						((JLabel) subpanels[i].getComponent(0)).getText(),
+				pricesBeforeUpdate.put(((JLabel) subpanels[i].getComponent(0)).getText(),
 						((JLabel) subpanels[i].getComponent(1)).getText());
 			}
 		}
 		for (int i = 0; i < trackedStocks.size(); i++) {
-			JLabel tooltipLabel = new JLabel("<html><img src=\"" + BLACKGRAPH
-					+ "\" /></html>");
+			JLabel tooltipLabel = new JLabel(BLACKLABEL);
 			masterGraphPanel.add(tooltipLabel);
 		}
 		add(masterGraphPanel, BorderLayout.EAST);
@@ -108,8 +106,7 @@ public class MainGUI extends JFrame {
 			if (trackedStocks.get(i).length() <= 5) {
 				sym = new JLabel(trackedStocks.get(i), SwingConstants.LEADING);
 			} else
-				sym = new JLabel(trackedStocks.get(i).substring(0, 3) + "...",
-						SwingConstants.LEADING);
+				sym = new JLabel(trackedStocks.get(i).substring(0, 3) + "...", SwingConstants.LEADING);
 			JLabel price = new JLabel();
 			if (pricesBeforeUpdate.containsKey(sym.getText()))
 				price.setText(pricesBeforeUpdate.get(sym.getText()).toString());
@@ -123,8 +120,7 @@ public class MainGUI extends JFrame {
 			masterPanel.add(subpanels[i]);
 		}
 		lastUpdateLabel = new JLabel("??:??:??");
-		lastUpdateLabel.setText("Updated: "
-				+ new SimpleDateFormat("hh:mm:ss").format(new Date()));
+		lastUpdateLabel.setText("Updated: " + new SimpleDateFormat("hh:mm:ss").format(new Date()));
 
 		masterPanel.addMouseListener(drag);
 		masterPanel.addMouseMotionListener(drag);
@@ -159,26 +155,20 @@ public class MainGUI extends JFrame {
 				// price);
 
 				try {
-					((JLabel) subpanels[i].getComponent(1)).setText(dF.format(
-							price).toString());
+					((JLabel) subpanels[i].getComponent(1)).setText(dF.format(price).toString());
 					JLabel tooltipLabel;
 					if (color == 'r') {
-						tooltipLabel = new JLabel("<html><img src=\""
-								+ REDGRAPH + "\" /></html>");
+						tooltipLabel = new JLabel(REDLABEL);
 					} else if (color == 'g') {
-						tooltipLabel = new JLabel("<html><img src=\""
-								+ GREENGRAPH + "\" /></html>");
+						tooltipLabel = new JLabel(GREENLABEL);
 					} else {
-						tooltipLabel = new JLabel("<html><img src=\""
-								+ BLACKGRAPH + "\" /></html>");
+						tooltipLabel = new JLabel(BLACKLABEL);
 
 					}
-					tooltipLabel.setToolTipText("<html><img src=\""
-							+ "http://chart.finance.yahoo.com/t?s="
-							+ trackedStocks.get(i)
+					tooltipLabel.setToolTipText(
+							"<html><img src=\"" + "http://chart.finance.yahoo.com/t?s=" + trackedStocks.get(i)
 							// + "&width=300&height=180"
-							+ "&width=" + (textSize * 15) + "&height="
-							+ (textSize * 10) + "\"/></html>");
+									+ "&width=" + (textSize * 15) + "&height=" + (textSize * 10) + "\"/></html>");
 
 					masterGraphPanel.add(tooltipLabel);
 					add(masterGraphPanel, BorderLayout.EAST);
@@ -186,8 +176,7 @@ public class MainGUI extends JFrame {
 
 				}
 			}
-			lastUpdateLabel.setText("Updated: "
-					+ new SimpleDateFormat("hh:mm:ss").format(new Date()));
+			lastUpdateLabel.setText("Updated: " + new SimpleDateFormat("hh:mm:ss").format(new Date()));
 
 		}
 	}
@@ -203,8 +192,7 @@ public class MainGUI extends JFrame {
 				addItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							String x = JOptionPane.showInputDialog(null,
-									"New stock symbol:", "Add symbol",
+							String x = JOptionPane.showInputDialog(null, "New stock symbol:", "Add symbol",
 									JOptionPane.PLAIN_MESSAGE);
 							if (x == null || x.equals(""))
 								return;
@@ -214,8 +202,7 @@ public class MainGUI extends JFrame {
 							}
 						} catch (Exception ex) {
 							ex.printStackTrace();
-							JOptionPane
-									.showMessageDialog(null, "Invalid input");
+							JOptionPane.showMessageDialog(null, "Invalid input");
 						}
 					}
 				});
@@ -256,8 +243,7 @@ public class MainGUI extends JFrame {
 				sizeCustom.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							String x = JOptionPane.showInputDialog(null,
-									"Set text size:", "Text size",
+							String x = JOptionPane.showInputDialog(null, "Set text size:", "Text size",
 									JOptionPane.PLAIN_MESSAGE);
 							if (x == null)
 								return;
@@ -265,8 +251,7 @@ public class MainGUI extends JFrame {
 							textSize = newSize;
 							constructPanels();
 						} catch (Exception ex) {
-							JOptionPane
-									.showMessageDialog(null, "Invalid input");
+							JOptionPane.showMessageDialog(null, "Invalid input");
 						}
 					}
 				});
@@ -285,21 +270,18 @@ public class MainGUI extends JFrame {
 						public void actionPerformed(ActionEvent e) {
 
 							int idxToRemove = mEvent.getY()
-									/ ((JComponent) mEvent.getSource())
-											.getComponent(0).getHeight();
+									/ ((JComponent) mEvent.getSource()).getComponent(0).getHeight();
 							trackedStocks.remove(idxToRemove);
 							constructPanels();
 
 						}
 					});
-					JMenuItem setNotificationItem = new JMenuItem(
-							"Set notifications...");
+					JMenuItem setNotificationItem = new JMenuItem("Set notifications...");
 					setNotificationItem.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
 							int idxToRemove = mEvent.getY()
-									/ ((JComponent) mEvent.getSource())
-											.getComponent(0).getHeight();
+									/ ((JComponent) mEvent.getSource()).getComponent(0).getHeight();
 
 						}
 					});
@@ -333,17 +315,14 @@ public class MainGUI extends JFrame {
 				refreshCustom.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							String x = JOptionPane.showInputDialog(null,
-									"Set update interval (in seconds):",
-									"Update interval",
-									JOptionPane.PLAIN_MESSAGE);
+							String x = JOptionPane.showInputDialog(null, "Set update interval (in seconds):",
+									"Update interval", JOptionPane.PLAIN_MESSAGE);
 							if (x == null)
 								return;
 							int newTime = Integer.parseInt(x);
 							changeUpdateInterval(newTime);
 						} catch (Exception ex) {
-							JOptionPane
-									.showMessageDialog(null, "Invalid input");
+							JOptionPane.showMessageDialog(null, "Invalid input");
 						}
 					}
 				});
@@ -364,20 +343,16 @@ public class MainGUI extends JFrame {
 				JMenuItem helpItem = new JMenuItem("Help");
 				helpItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						JOptionPane
-								.showMessageDialog(
-										null,
-										"Stockr - an app (widget?) for keeping track of stock prices."
-												+ "\nOriginally an enterprise-level project, but dropped to"
-												+ "\nindividual-use due to lack of users."
-												+ "\n"
-												+ "\nAll prices are up-to-date and scraped from Yahoo Finance."
-												+ "\nCan't find a symbol? Look it up on Yahoo Finance."
-												+ "\nLeave this JAR file in same dir as 'mystocks.txt'"
-												+ "\nStocks are automatically saved upon right click > exit."
-												+ "\n"
-												+ "\nCreated by Mike, Jan. 2016",
-										"Help", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"Stockr - an app (widget?) for keeping track of stock prices."
+										+ "\nOriginally an enterprise-level project, but dropped to"
+										+ "\nindividual-use due to lack of users." + "\n"
+										+ "\nAll prices are up-to-date and scraped from Yahoo Finance."
+										+ "\nCan't find a symbol? Look it up on Yahoo Finance."
+										+ "\nLeave this JAR file in same dir as 'mystocks.txt'"
+										+ "\nStocks are automatically saved upon right click > exit." + "\n"
+										+ "\nCreated by Mike, Jan. 2016",
+								"Help", JOptionPane.INFORMATION_MESSAGE);
 					}
 				});
 				leftClickMenu.add(changeSizeItem);
@@ -391,8 +366,7 @@ public class MainGUI extends JFrame {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			setLocation(new Point(e.getXOnScreen() - (getWidth() / 2),
-					e.getYOnScreen() - (getHeight() / 2)));
+			setLocation(new Point(e.getXOnScreen() - (getWidth() / 2), e.getYOnScreen() - (getHeight() / 2)));
 
 		}
 	}
