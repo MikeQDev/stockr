@@ -77,6 +77,7 @@ public class MainGUI extends JFrame {
 		uS.cancel();
 		uS = new UpdateScheduler();
 		updateTimer.schedule(uS, 0, refreshTime);
+		constructPanels();
 	}
 
 	private void constructPanels() {
@@ -136,9 +137,11 @@ public class MainGUI extends JFrame {
 	public class UpdateScheduler extends TimerTask {
 		@Override
 		public void run() {
+			System.out.println("refresh");
 			masterGraphPanel.removeAll();
 			for (int i = 0; i < trackedStocks.size(); i++) {
 				Double[] scrapeResults = Scrape.getPrice(trackedStocks.get(i));
+
 				double price = scrapeResults[0];
 				char color = 'b';
 				if (scrapeResults[1] == 1) {
@@ -167,8 +170,8 @@ public class MainGUI extends JFrame {
 					}
 					tooltipLabel.setToolTipText(
 							"<html><img src=\"" + "http://chart.finance.yahoo.com/t?s=" + trackedStocks.get(i)
-							// + "&width=300&height=180"
-									+ "&width=" + (textSize * 15) + "&height=" + (textSize * 10) + "\"/></html>");
+							// + "&0&height=180"
+									+ "&widwidth=30th=" + (textSize * 15) + "&height=" + (textSize * 10) + "\"/></html>");
 
 					masterGraphPanel.add(tooltipLabel);
 					add(masterGraphPanel, BorderLayout.EAST);
